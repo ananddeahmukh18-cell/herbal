@@ -1,0 +1,692 @@
+create a new code using the code pasted for our website forme and enhance the code wihtout errors "<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FORMÉ | Science That Cares</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --navy: #1a2c4e;
+            --emerald: #2a4d36;
+            --gold: #c5a059;
+            --cream: #f9f7f2;
+            --white: #ffffff;
+            --text-gray: #4a4a4a;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Montserrat', sans-serif; 
+            background-color: var(--cream); 
+            color: var(--navy);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            background: var(--white);
+            padding: 10px 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .logo img { height: 60px; cursor: pointer; transition: 0.3s; }
+        .logo img:hover { opacity: 0.8; }
+
+        .nav-links { display: flex; gap: 30px; }
+        .nav-links a { 
+            text-decoration: none; 
+            color: var(--navy); 
+            font-weight: 600; 
+            font-size: 12px; 
+            text-transform: uppercase; 
+            letter-spacing: 1.5px;
+            transition: 0.3s;
+        }
+        .nav-links a:hover { color: var(--gold); }
+
+        .nav-actions { display: flex; align-items: center; gap: 20px; }
+        
+        .search-box {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid var(--navy);
+            padding: 2px 5px;
+        }
+        .search-box input {
+            border: none;
+            outline: none;
+            background: transparent;
+            font-size: 14px;
+            width: 120px;
+        }
+
+        .cart-trigger { cursor: pointer; position: relative; font-size: 20px; }
+        .cart-count {
+            position: absolute; top: -8px; right: -8px;
+            background: var(--gold); color: white;
+            font-size: 10px; padding: 2px 6px; border-radius: 50%;
+        }
+
+        /* --- PAGE CONTENT --- */
+        .page-section { display: none; min-height: 80vh; padding-top: 20px; }
+        .page-section.active { display: block; animation: fadeIn 0.6s ease; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- HERO --- */
+        .hero {
+            height: 75vh;
+            background: linear-gradient(rgba(26, 44, 78, 0.4), rgba(26, 44, 78, 0.2)), url('images/hero-banner.jpg');
+            background-size: cover;
+            background-position: center;
+            display: flex; align-items: center; justify-content: center;
+            color: white; text-align: center;
+            margin-bottom: 50px;
+        }
+        .hero-content h1 { font-family: 'Playfair Display', serif; font-size: 4.5rem; letter-spacing: 5px; }
+        .hero-content p { font-style: italic; font-size: 1.2rem; margin-bottom: 20px; }
+
+        /* --- SHOP COMPONENTS --- */
+        .category-tabs { display: flex; justify-content: center; gap: 10px; margin: 30px 0; }
+        .tab-btn {
+            background: transparent; border: 1px solid var(--navy);
+            padding: 10px 30px; cursor: pointer; text-transform: uppercase;
+            font-weight: 600; font-size: 12px; letter-spacing: 1px; transition: 0.3s;
+        }
+        .tab-btn.active, .tab-btn:hover { background: var(--navy); color: white; }
+
+        .product-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 40px; padding: 0 5%;
+        }
+
+        .product-card {
+            background: var(--white);
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: 0.4s;
+            text-align: center;
+        }
+        .product-card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.05); }
+        .product-card img { width: 100%; height: 350px; object-fit: cover; }
+        
+        .p-info { padding: 25px; }
+        .p-info h3 { font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 5px; }
+        .p-category { font-size: 10px; text-transform: uppercase; color: var(--gold); letter-spacing: 2px; margin-bottom: 10px; }
+        .p-price { font-weight: 700; color: var(--emerald); font-size: 1.1rem; margin-bottom: 20px; }
+
+        .p-actions { display: flex; gap: 10px; }
+        .btn {
+            flex: 1; padding: 12px; font-size: 11px; font-weight: 700;
+            text-transform: uppercase; cursor: pointer; border: 1px solid var(--navy); transition: 0.3s;
+        }
+        .btn-add { background: transparent; color: var(--navy); }
+        .btn-buy { background: var(--navy); color: white; }
+        .btn-buy:hover { background: var(--gold); border-color: var(--gold); }
+
+        /* --- CART SIDEBAR --- */
+        #cart-sidebar {
+            position: fixed; right: -400px; top: 0; width: 380px; height: 100%;
+            background: white; z-index: 2000; transition: 0.4s cubic-bezier(0.1, 0.7, 1.0, 0.1);
+            padding: 40px; box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+            display: flex; flex-direction: column;
+        }
+        #cart-sidebar.active { right: 0; }
+        .cart-item { display: flex; gap: 15px; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #eee; }
+        
+        /* --- FOOTER --- */
+        footer { background: var(--navy); color: var(--white); padding: 80px 5% 40px; text-align: center; margin-top: 100px; }
+        .footer-logo { font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: 20px; color: var(--gold); }
+
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">
+            <img src="images/logo.jpg" alt="Formé Logo" onclick="showPage('home')">
+        </div>
+        <div class="nav-links">
+            <a href="#" onclick="showPage('home')">Home</a>
+            <a href="#" onclick="showPage('shop')">Shop Collection</a>
+            <a href="#" onclick="showPage('science')">Our Science</a>
+            <a href="#" onclick="showPage('contact')">Contact</a>
+        </div>
+        <div class="nav-actions">
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="Search product..." onkeyup="runSearch()">
+                <span>🔍</span>
+            </div>
+            <div class="cart-trigger" onclick="toggleCart(true)">
+                👜 <span class="cart-count" id="cart-count">0</span>
+            </div>
+        </div>
+    </nav>
+
+    <section id="home" class="page-section active">
+        <div class="hero">
+            <div class="hero-content">
+                <p>High-Performance Ingredients</p>
+                <h1>FORMÉ</h1>
+                <button class="btn btn-buy" style="padding: 15px 40px;" onclick="showPage('shop')">Shop Now</button>
+            </div>
+        </div>
+        
+        <h2 style="text-align: center; font-family: 'Playfair Display'; margin-bottom: 40px;">Featured Essentials</h2>
+        <div class="product-grid" id="featured-grid"></div>
+    </section>
+
+    <section id="shop" class="page-section">
+        <h2 style="text-align: center; font-family: 'Playfair Display'; font-size: 2.5rem; margin-top: 40px;">The Laboratory</h2>
+        <div class="category-tabs">
+            <button class="tab-btn active" onclick="filterShop('all', this)">All Products</button>
+            <button class="tab-btn" onclick="filterShop('Face', this)">Face Care</button>
+            <button class="tab-btn" onclick="filterShop('Hair', this)">Hair Care</button>
+        </div>
+        <div class="product-grid" id="main-shop-grid"></div>
+    </section>
+
+    <section id="science" class="page-section" style="padding: 100px 15%;">
+        <h2 style="font-family: 'Playfair Display'; font-size: 3rem; margin-bottom: 30px;">Science That Cares</h2>
+        <div style="display: flex; gap: 50px; align-items: center;">
+            <p style="font-size: 1.1rem; flex: 1;">At Formé, we believe beauty is a science. Every formula is developed in our labs using pH-balanced ingredients, avoiding parabens and harsh sulfates. We prioritize <strong>Clinical Efficacy</strong> and <strong>Botanical Purity</strong>.</p>
+            <img src="images/product-group.jpg" style="width: 400px; flex: 1; border-radius: 4px;">
+        </div>
+    </section>
+
+    <section id="contact" class="page-section" style="text-align: center; padding-top: 100px;">
+        <h2 style="font-family: 'Playfair Display'; font-size: 2.5rem;">Reach Out</h2>
+        <p>Inquiries: support@forme.in</p>
+        <p>HQ: Bandra West, Mumbai, India</p>
+    </section>
+
+    <div id="cart-sidebar">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+            <h3>Your Bag</h3>
+            <span style="cursor: pointer; font-size: 24px;" onclick="toggleCart(false)">✕</span>
+        </div>
+        <div id="cart-content" style="flex-grow: 1; overflow-y: auto;">
+            </div>
+        <div style="border-top: 1px solid #eee; padding-top: 20px;">
+            <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 1.2rem;">
+                <span>Total</span>
+                <span>₹<span id="cart-total">0</span></span>
+            </div>
+            <button class="btn btn-buy" style="width: 100%; margin-top: 20px; padding: 15px;" onclick="checkout()">Proceed to Checkout</button>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-logo">FORMÉ</div>
+        <p>Advanced Skincare & Haircare for the Modern Form.</p>
+        <div style="margin: 20px 0;">
+            <a href="#" style="color: white; margin: 0 10px; text-decoration: none; font-size: 12px;">Privacy</a>
+            <a href="#" style="color: white; margin: 0 10px; text-decoration: none; font-size: 12px;">Shipping</a>
+            <a href="#" style="color: white; margin: 0 10px; text-decoration: none; font-size: 12px;">Instagram</a>
+        </div>
+    </footer>
+
+    <script>
+        // --- PRODUCT DATABASE ---
+        const products = [
+            { id: 1, name: "Hyaluronic Face Serum", cat: "Face", price: 1499, img: "images/serum-blue.jpg", featured: true },
+            { id: 2, name: "Gentle Face Wash", cat: "Face", price: 850, img: "images/face-wash.jpg", featured: true },
+            { id: 3, name: "Keratin Hair Serum", cat: "Hair", price: 1899, img: "images/product-group.jpg", featured: true },
+            { id: 4, name: "Vitamin C Night Cream", cat: "Face", price: 1200, img: "images/product-group.jpg", featured: false },
+            { id: 5, name: "Argan Oil Hair Mask", cat: "Hair", price: 1150, img: "images/serum-blue.jpg", featured: false },
+            { id: 6, name: "AHA/BHA Exfoliant", cat: "Face", price: 999, img: "images/face-wash.jpg", featured: false }
+        ];
+
+        let cart = [];
+
+        // --- PAGE SWITCHER ---
+        function showPage(pageId) {
+            document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            window.scrollTo(0,0);
+        }
+
+        // --- SEARCH ENGINE ---
+        function runSearch() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            const results = products.filter(p => p.name.toLowerCase().includes(query));
+            renderGrid(results, 'main-shop-grid');
+            showPage('shop');
+        }
+
+        // --- SHOP FILTERING ---
+        function filterShop(category, btn) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const filtered = category === 'all' ? products : products.filter(p => p.cat === category);
+            renderGrid(filtered, 'main-shop-grid');
+        }
+
+        // --- RENDER FUNCTION ---
+        function renderGrid(data, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = data.map(p => `
+                <div class="product-card">
+                    <img src="${p.img}" alt="${p.name}">
+                    <div class="p-info">
+                        <div class="p-category">${p.cat}</div>
+                        <h3>${p.name}</h3>
+                        <div class="p-price">₹${p.price}</div>
+                        <div class="p-actions">
+                            <button class="btn btn-add" onclick="addToCart(${p.id})">Add to Cart</button>
+                            <button class="btn btn-buy" onclick="buyNow(${p.id})">Buy Now</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // --- CART LOGIC ---
+        function addToCart(id) {
+            const p = products.find(item => item.id === id);
+            cart.push(p);
+            updateCart();
+            toggleCart(true);
+        }
+
+        function buyNow(id) {
+            cart = [products.find(item => item.id === id)];
+            updateCart();
+            toggleCart(true);
+        }
+
+        function updateCart() {
+            document.getElementById('cart-count').innerText = cart.length;
+            const container = document.getElementById('cart-content');
+            const totalSpan = document.getElementById('cart-total');
+            
+            if(cart.length === 0) {
+                container.innerHTML = '<p style="text-align:center; margin-top:50px; opacity:0.5;">Your bag is empty.</p>';
+                totalSpan.innerText = "0";
+                return;
+            }
+
+            container.innerHTML = cart.map((item, index) => `
+                <div class="cart-item">
+                    <img src="${item.img}" style="width: 60px; height: 60px; object-fit: cover;">
+                    <div style="flex-grow:1;">
+                        <div style="font-weight:600; font-size:14px;">${item.name}</div>
+                        <div style="font-size:12px; color:var(--emerald);">₹${item.price}</div>
+                    </div>
+                    <span style="cursor:pointer; font-size:12px;" onclick="removeItem(${index})">Remove</span>
+                </div>
+            `).join('');
+
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            totalSpan.innerText = total.toLocaleString('en-IN');
+        }
+
+        function removeItem(index) {
+            cart.splice(index, 1);
+            updateCart();
+        }
+
+        function toggleCart(show) {
+            document.getElementById('cart-sidebar').classList.toggle('active', show);
+        }
+
+        function checkout() {
+            if(cart.length === 0) return;
+            alert("Redirecting to Razorpay Secure Payment...");
+        }
+
+        // Initialize Data
+        renderGrid(products.filter(p => p.featured), 'featured-grid');
+        renderGrid(products, 'main-shop-grid');
+// 1. ADD YOUR RAZORPAY LINKS HERE
+const products = [
+    { 
+        id: 1, 
+        name: "Hyaluronic Face Serum", 
+        cat: "Face", 
+        price: 1499, 
+        img: "images/serum-blue.jpg", 
+        featured: true,
+        payLink: "https://pages.razorpay.com/your_serum_link" // <-- Paste your Razorpay Link here
+    },
+    { 
+        id: 2, 
+        name: "Gentle Face Wash", 
+        cat: "Face", 
+        price: 850, 
+        img: "images/face-wash.jpg", 
+        featured: true,
+        payLink: "https://pages.razorpay.com/your_facewash_link"
+    },
+    { 
+        id: 3, 
+        name: "Keratin Hair Serum", 
+        cat: "Hair", 
+        price: 1899, 
+        img: "images/product-group.jpg", 
+        featured: true,
+        payLink: "https://pages.razorpay.com/your_hairserum_link"
+    }
+    // Add more products following the same pattern...
+];
+
+let cart = [];
+
+// --- NAVIGATION & SEARCH ---
+function showPage(pageId) {
+    document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active'));
+    document.getElementById(pageId).classList.add('active');
+    window.scrollTo(0,0);
+}
+
+function runSearch() {
+    const query = document.getElementById('search-input').value.toLowerCase();
+    const results = products.filter(p => p.name.toLowerCase().includes(query));
+    renderGrid(results, 'main-shop-grid');
+    showPage('shop');
+}
+
+// --- SHOP LOGIC ---
+function renderGrid(data, containerId) {
+    const container = document.getElementById(containerId);
+    if(!container) return;
+    container.innerHTML = data.map(p => `
+        <div class="product-card">
+            <img src="${p.img}" alt="${p.name}">
+            <div class="p-info">
+                <div class="p-category">${p.cat}</div>
+                <h3>${p.name}</h3>
+                <div class="p-price">₹${p.price}</div>
+                <div class="p-actions">
+                    <button class="btn btn-add" onclick="addToCart(${p.id})">Add to Bag</button>
+                    <button class="btn btn-buy" onclick="buyNow(${p.id})">Buy Now</button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// --- CHECKOUT LOGIC ---
+
+// Buy Now: Takes user directly to the Razorpay page for that specific product
+function buyNow(id) {
+    const p = products.find(item => item.id === id);
+    if(p.payLink && p.payLink !== "") {
+        window.location.href = p.payLink; 
+    } else {
+        alert("Payment link for this product is coming soon!");
+    }
+}
+
+// Proceed to Checkout (From Cart): 
+// For a free setup, it's best to send the whole cart to your WhatsApp 
+// or a general "Full Payment" link.
+function checkout() {
+    if(cart.length === 0) return alert("Your bag is empty!");
+    
+    const total = cart.reduce((sum, item) => sum + item.price, 0);
+    const itemNames = cart.map(i => i.name).join(", ");
+    
+    // OPTION 1: WhatsApp Checkout (Best for free trust building)
+    const message = `Hi Formé! I want to buy: ${itemNames}. Total: ₹${total}. Please share payment details.`;
+    window.open(`https://wa.me/91YOURNUMBER?text=${encodeURIComponent(message)}`);
+
+    // OPTION 2: If you have a general Razorpay link for any amount:
+    // window.location.href = "https://pages.razorpay.com/your_general_link";
+}
+
+// --- CART FUNCTIONS ---
+function addToCart(id) {
+    const p = products.find(item => item.id === id);
+    cart.push(p);
+    updateCart();
+    toggleCart(true);
+}
+
+function updateCart() {
+    document.getElementById('cart-count').innerText = cart.length;
+    const container = document.getElementById('cart-content');
+    const totalSpan = document.getElementById('cart-total');
+    
+    container.innerHTML = cart.map((item, index) => `
+        <div class="cart-item">
+            <div style="flex-grow:1;">
+                <div style="font-weight:600; font-size:14px;">${item.name}</div>
+                <div style="font-size:12px; color:#2a4d36;">₹${item.price}</div>
+            </div>
+            <span style="cursor:pointer; font-size:10px; color:red;" onclick="removeItem(${index})">Remove</span>
+        </div>
+    `).join('');
+
+    const total = cart.reduce((sum, item) => sum + item.price, 0);
+    totalSpan.innerText = total.toLocaleString('en-IN');
+}
+
+function removeItem(index) {
+    cart.splice(index, 1);
+    updateCart();
+}
+
+function toggleCart(show) {
+    document.getElementById('cart-sidebar').classList.toggle('active', show);
+}
+
+// Initialize
+renderGrid(products.filter(p => p.featured), 'featured-grid');
+renderGrid(products, 'main-shop-grid');
+      function checkout() {
+    if(cart.length === 0) return alert("Your cart is empty!");
+    
+    // Example: If you have one general payment link for any total
+    // You can redirect them to a Razorpay "Payment Page"
+    window.location.href = "https://rzp.io/l/your_custom_link"; 
+}
+      <a href="https://wa.me/91YOURNUMBER" 
+   style="position:fixed; bottom:20px; right:20px; background:#25d366; color:white; padding:15px; border-radius:50px; text-decoration:none; z-index:1000; box-shadow: 0 4px 10px rgba(0,0,0,0.2); font-weight:bold;">
+   Chat with Formé 💬
+</a>
+      // --- CONFIGURATION ---
+const YOUR_PHONE_NUMBER = "919876543210"; // Replace with your actual WhatsApp number (include 91)
+
+// --- UPDATED FUNCTIONS ---
+
+function buyNow(id) {
+    const p = products.find(item => item.id === id);
+    const message = `ORDER INQUIRY:%0AProduct: ${p.name}%0APrice: ₹${p.price}%0A%0AI would like to pay for this via WhatsApp/UPI. Please guide me!`;
+    
+    // Redirects to WhatsApp
+    window.location.href = `https://wa.me/${YOUR_PHONE_NUMBER}?text=${message}`;
+}
+
+function checkout() {
+    if (cart.length === 0) return alert("Your bag is empty!");
+
+    const total = cart.reduce((sum, item) => sum + item.price, 0);
+    const itemDetails = cart.map(item => `- ${item.name} (₹${item.price})`).join('%0A');
+    
+    const message = `NEW ORDER FORMÉ:%0A---%0A${itemDetails}%0A---%0ATotal Amount: ₹${total}%0A%0AI would like to pay via WhatsApp/UPI. Please share your payment details!`;
+
+    // Opens WhatsApp in a new tab
+    window.open(`https://wa.me/${YOUR_PHONE_NUMBER}?text=${message}`, '_blank');
+}
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script>
+// --- CONFIGURATION ---
+const YOUR_PHONE_NUMBER = "919876543210"; // Replace with your number
+
+// --- NEW INVOICE GENERATOR ---
+async function generateInvoice() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const orderID = "FRM-" + Math.floor(1000 + Math.random() * 9000);
+    const date = new Date().toLocaleDateString();
+
+    // -- Styling & Header --
+    doc.setFont("playfair", "bold");
+    doc.setFontSize(22);
+    doc.setTextColor(26, 44, 78); // Formé Navy
+    doc.text("FORMÉ", 105, 20, { align: "center" });
+    
+    doc.setFont("montserrat", "normal");
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text("Science That Cares | Laboratory Grade Skincare", 105, 28, { align: "center" });
+
+    // -- Order Info --
+    doc.setFontSize(12);
+    doc.setTextColor(0);
+    doc.text(`Invoice No: ${orderID}`, 20, 50);
+    doc.text(`Date: ${date}`, 20, 57);
+
+    // -- Table Header --
+    doc.setDrawColor(197, 160, 89); // Formé Gold
+    doc.line(20, 65, 190, 65);
+    doc.setFont("montserrat", "bold");
+    doc.text("Product Name", 25, 72);
+    doc.text("Price", 170, 72);
+    doc.line(20, 75, 190, 75);
+
+    // -- List Items --
+    doc.setFont("montserrat", "normal");
+    let yPos = 85;
+    let total = 0;
+
+    cart.forEach(item => {
+        doc.text(item.name, 25, yPos);
+        doc.text(`INR ${item.price}`, 170, yPos);
+        total += item.price;
+        yPos += 10;
+    });
+
+    // -- Footer & Total --
+    doc.line(20, yPos + 5, 190, yPos + 5);
+    doc.setFontSize(14);
+    doc.setFont("montserrat", "bold");
+    doc.text(`Grand Total: INR ${total}`, 130, yPos + 15);
+
+    doc.setFontSize(10);
+    doc.setTextColor(42, 77, 54); // Emerald
+    doc.text("Thank you for choosing Formé. Please complete payment via UPI.", 20, yPos + 40);
+
+    // Save the PDF
+    doc.save(`Forme_Invoice_${orderID}.pdf`);
+}
+
+// --- UPDATED CHECKOUT FUNCTION ---
+async function checkout() {
+    if (cart.length === 0) return alert("Your bag is empty!");
+
+    // 1. Generate the Invoice
+    alert("Generating your official invoice...");
+    await generateInvoice();
+
+    // 2. Prepare WhatsApp Message
+    const total = cart.reduce((sum, item) => sum + item.price, 0);
+    const itemNames = cart.map(i => i.name).join(", ");
+    const message = `ORDER INQUIRY:%0A---%0AItems: ${itemNames}%0ATotal: ₹${total}%0A%0AI have downloaded the invoice. Please share UPI details for payment!`;
+
+    // 3. Redirect to WhatsApp
+    setTimeout(() => {
+        window.open(`https://wa.me/${YOUR_PHONE_NUMBER}?text=${message}`, '_blank');
+    }, 1500);
+}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<section id="checkout-page" class="page-section" style="padding: 50px 10%; text-align: center; background: white;">
+    <h2 style="font-family: 'Playfair Display'; margin-bottom: 30px;">Complete Your Order</h2>
+    
+    <div style="display: flex; flex-wrap: wrap; gap: 40px; justify-content: center;">
+        <div style="flex: 1; min-width: 300px; text-align: left; background: #f9f7f2; padding: 30px; border-radius: 8px;">
+            <h3>Order Summary</h3>
+            <div id="checkout-items-list" style="margin: 20px 0;"></div>
+            <hr style="margin: 15px 0; border: 0; border-top: 1px solid #ddd;">
+            
+            <div style="margin-bottom: 15px;">
+                <input type="text" id="discount-input" placeholder="Enter Discount Code" style="padding: 10px; width: 65%; border: 1px solid #1a2c4e;">
+                <button onclick="applyDiscount()" style="padding: 10px; background: #c5a059; color: white; border: none; cursor: pointer;">Apply</button>
+                <p id="discount-msg" style="font-size: 12px; margin-top: 5px;"></p>
+            </div>
+
+            <div style="font-size: 1.2rem; font-weight: bold; color: #1a2c4e;">
+                Final Total: ₹<span id="final-amount">0</span>
+            </div>
+        </div>
+
+        <div style="flex: 1; min-width: 300px; background: #fff; padding: 30px; border: 1px solid #eee; border-radius: 8px;">
+            <h3>Scan & Pay with any UPI App</h3>
+            <p style="font-size: 13px; color: #666; margin-bottom: 20px;">GPay, PhonePe, Paytm, BHIM</p>
+            
+            <div id="qrcode" style="display: flex; justify-content: center; margin-bottom: 20px;"></div>
+            
+            <p style="font-weight: bold; color: #1a2c4e;">UPI ID: forme@okaxis</p> <button class="btn btn-buy" style="width: 100%; margin-top: 20px;" onclick="confirmPaymentWhatsApp()">
+                I Have Paid - Notify Formé 💬
+            </button>
+        </div>
+    </div>
+</section>
+
+<script>
+// --- CONFIGURATION ---
+const YOUR_PHONE_NUMBER = "919876543210"; // Your number
+const YOUR_UPI_ID = "forme@okaxis";      // Your UPI ID
+let currentTotal = 0;
+let discountApplied = 0;
+
+// --- CHECKOUT PAGE LOGIC ---
+function showCheckout() {
+    if (cart.length === 0) return alert("Your bag is empty!");
+    
+    showPage('checkout-page');
+    updateCheckoutSummary();
+}
+
+function updateCheckoutSummary() {
+    const list = document.getElementById('checkout-items-list');
+    currentTotal = cart.reduce((sum, item) => sum + item.price, 0);
+    
+    list.innerHTML = cart.map(item => `
+        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+            <span>${item.name}</span>
+            <span>₹${item.price}</span>
+        </div>
+    `).join('');
+    
+    updateFinalTotal();
+}
+
+function applyDiscount() {
+    const code = document.getElementById('discount-input').value.toUpperCase();
+    const msg = document.getElementById('discount-msg');
+    
+    if (code === "FORME10") {
+        discountApplied = currentTotal * 0.10; // 10% off
+        msg.innerText = "Code Applied! 10% Discounted.";
+        msg.style.color = "green";
+    } else {
+        discountApplied = 0;
+        msg.innerText = "Invalid Code.";
+        msg.style.color = "red";
+    }
+    updateFinalTotal();
+}
+
+function updateFinalTotal() {
+    const final = currentTotal - discountApplied;
+    document.getElementById('final-amount').innerText = final.toLocaleString('en-IN');
+    generateUPIRQR(final);
+</script>
+    </script>
+</body>
+</html>"

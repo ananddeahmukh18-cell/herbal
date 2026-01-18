@@ -12,6 +12,15 @@
 
 <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
 
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script type="text/javascript">
+   (function(){
+      // Initialize EmailJS
+      // REPLACE 'YOUR_PUBLIC_KEY' WITH YOUR ACTUAL KEY FROM EMAILJS DASHBOARD
+      emailjs.init("YOUR_PUBLIC_KEY");
+   })();
+</script>
+
 <style>
 /* ---------- 1. Variables & Reset ---------- */
 :root {
@@ -40,7 +49,7 @@ body {
   color: var(--text-dark);
   line-height: 1.6;
   overflow-x: hidden;
-  width: 100%;
+  padding-bottom: 70px; /* Space for bottom bar */
 }
 
 h1, h2, h3, h4 { font-family: var(--font-heading); color: var(--primary); }
@@ -54,7 +63,7 @@ input, textarea { font-family: var(--font-body); }
 
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  padding: 12px 24px; /* Larger touch target */
+  padding: 12px 24px;
   border-radius: 50px;
   font-weight: 700;
   letter-spacing: 0.5px;
@@ -97,7 +106,13 @@ header {
   display: flex; align-items: center; gap: 10px;
   font-family: var(--font-heading); font-size: 20px; font-weight: 700; color: var(--primary);
 }
-.logo img { height: 50px; width: 50px; border-radius: 50%; object-fit: cover; }
+.logo img { 
+    height: 50px; width: 50px; border-radius: 50%; object-fit: cover;
+    /* LOGO ROTATION ANIMATION RESTORED */
+    animation: rotateLogo 20s linear infinite;
+}
+
+@keyframes rotateLogo { 100% { transform: rotate(360deg); } }
 
 .nav-menu { display: flex; gap: 30px; }
 .nav-menu a { font-size: 14px; font-weight: 700; color: var(--text-dark); position: relative; }
@@ -108,7 +123,7 @@ header {
 .nav-menu a:hover::after { width: 100%; }
 
 .nav-icons { display: flex; align-items: center; gap: 20px; }
-.cart-icon-wrap { position: relative; cursor: pointer; font-size: 20px; padding: 5px; } /* Larger padding */
+.cart-icon-wrap { position: relative; cursor: pointer; font-size: 20px; padding: 5px; } 
 .cart-count {
   position: absolute; top: -5px; right: -5px;
   background: var(--danger); color: white;
@@ -163,14 +178,14 @@ header {
 .filter-btn.active, .filter-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
 
 .products-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); /* Better Mobile Grid */
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 25px; padding-bottom: 60px;
 }
 
 .product-card {
   background: white; border-radius: var(--radius); overflow: hidden;
   box-shadow: var(--shadow); transition: var(--transition); border: 1px solid #f0f0f0;
-  will-change: transform; /* Performance hint */
+  will-change: transform;
 }
 .product-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
 
@@ -183,7 +198,7 @@ header {
 .product-price { font-weight: 700; color: var(--primary); font-size: 16px; margin-bottom: 15px; }
 .card-btns { display: flex; gap: 8px; justify-content: center; }
 
-/* ---------- 6. Reviews Section (Enhanced) ---------- */
+/* ---------- 6. Reviews Section ---------- */
 .testimonials { background: var(--secondary); padding: 60px 0; margin-bottom: 60px; }
 .reviews-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; flex-wrap: wrap; gap: 15px; }
 .testimonial-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
@@ -216,7 +231,6 @@ header {
   width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;
 }
 
-/* Star Rating Input */
 .star-rating { direction: rtl; display: inline-flex; font-size: 24px; cursor: pointer; }
 .star-rating input { display: none; }
 .star-rating label { color: #ddd; margin: 0 2px; transition: color 0.2s; }
@@ -236,15 +250,29 @@ header {
 .cart-controls { display: flex; align-items: center; gap: 10px; margin-top: 5px; }
 .qty-btn { width: 25px; height: 25px; border-radius: 50%; background: #f0f0f0; display: flex; align-items: center; justify-content: center; }
 
-/* ---------- 9. Utilities & Mobile Optimized ---------- */
-.whatsapp-float {
-  position: fixed; bottom: 20px; right: 20px;
-  background: #25d366; color: white; width: 55px; height: 55px;
-  border-radius: 50%; display: flex; align-items: center; justify-content: center;
-  font-size: 28px; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4); z-index: 900;
+/* ---------- 9. Social Media & Contact Bar ---------- */
+.social-bar {
+  position: fixed; bottom: 0; left: 0; width: 100%;
+  background: white; border-top: 1px solid #eee;
+  display: flex; justify-content: space-around; align-items: center;
+  padding: 10px 0; z-index: 900;
+  box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
 }
+.social-link {
+  display: flex; flex-direction: column; align-items: center;
+  font-size: 12px; color: var(--text-dark); gap: 4px;
+}
+.social-link i { font-size: 20px; transition: transform 0.2s; }
+.social-link:hover i { transform: translateY(-3px); }
+
+/* Brand Colors for Social Icons */
+.fa-whatsapp { color: #25d366; }
+.fa-instagram { color: #C13584; }
+.fa-facebook { color: #1877F2; }
+
+/* Toast */
 .toast {
-  position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
+  position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(20px);
   background: rgba(30,30,30,0.9); color: white; padding: 10px 20px; border-radius: 30px;
   font-size: 14px; opacity: 0; transition: 0.3s; pointer-events: none; z-index: 2000;
   display: flex; align-items: center; gap: 8px; width: max-content;
@@ -357,16 +385,27 @@ header {
   </div>
 </section>
 
-<footer style="background: #222; color: #fff; padding: 40px 0; margin-top: auto;">
+<footer style="background: #222; color: #fff; padding: 40px 0; margin-bottom: 60px;">
   <div class="container" style="text-align: center;">
     <h3 style="color: white; margin-bottom: 10px;">Herbal&Heaven</h3>
     <p style="color: #888; font-size: 13px;">Nature's Pure Essence. Made with Love.</p>
   </div>
 </footer>
 
-<a href="https://wa.me/919595641664?text=Hi%20Herbal%20Heaven," class="whatsapp-float" target="_blank">
-  <i class="fa-brands fa-whatsapp"></i>
-</a>
+<div class="social-bar">
+    <a href="https://wa.me/919595641664" target="_blank" class="social-link">
+        <i class="fa-brands fa-whatsapp"></i>
+        <span>WhatsApp</span>
+    </a>
+    <a href="https://instagram.com/aose_clothing" target="_blank" class="social-link">
+        <i class="fa-brands fa-instagram"></i>
+        <span>Instagram</span>
+    </a>
+    <a href="https://facebook.com" target="_blank" class="social-link">
+        <i class="fa-brands fa-facebook"></i>
+        <span>Facebook</span>
+    </a>
+</div>
 
 <div class="toast" id="toast">Item added to cart</div>
 
@@ -438,6 +477,9 @@ header {
     <h3>Shipping Info</h3>
     <form onsubmit="goToPayment(event)">
       <div class="form-group"><input id="cName" type="text" placeholder="Full Name" required></div>
+      <div class="form-group">
+          <input id="cEmail" type="email" placeholder="Email Address (For Bill)" required>
+      </div>
       <div class="form-group"><input id="cPhone" type="tel" placeholder="Phone" required></div>
       <div class="form-group"><textarea id="cAddr" rows="2" placeholder="Full Address" required></textarea></div>
       <button type="submit" class="btn btn-primary" style="width:100%;">Proceed to Pay</button>
@@ -461,7 +503,7 @@ header {
   <div id="step3" style="display:none; text-align:center;">
     <i class="fa-solid fa-circle-check" style="color:var(--success); font-size:50px; margin-bottom:15px;"></i>
     <h3>Order Placed!</h3>
-    <p>We will contact you shortly.</p>
+    <p>We have sent a confirmation email to <span id="confEmailDisplay" style="font-weight:bold;"></span>.</p>
     <button class="btn btn-secondary" onclick="closeCheckout(); location.reload();" style="margin-top:20px;">Close</button>
   </div>
 </div>
@@ -495,6 +537,9 @@ header {
 // --- CONFIG ---
 const UPI_ID = "damareomkar96@oksbi";
 const ADMIN_PASS = "omti96";
+// IMPORTANT: Setup EmailJS account to get these keys
+const EMAILJS_SERVICE_ID = "YOUR_SERVICE_ID"; 
+const EMAILJS_TEMPLATE_ID = "YOUR_TEMPLATE_ID";
 
 // --- DATA ---
 const products = [
@@ -529,7 +574,6 @@ window.onload = () => {
 
 // --- LEAD GEN LOGIC ---
 function checkLeadGen() {
-    // If user hasn't signed in yet, show modal after 2 seconds
     if (!localStorage.getItem('hh_user_signed')) {
         setTimeout(() => {
             document.getElementById('leadModal').classList.add('active');
@@ -541,7 +585,6 @@ function checkLeadGen() {
 function closeLeadModal() {
     document.getElementById('leadModal').classList.remove('active');
     document.getElementById('leadOverlay').classList.remove('active');
-    // Don't show again for this session to avoid annoyance
     localStorage.setItem('hh_user_signed', 'skipped'); 
 }
 
@@ -557,8 +600,9 @@ function submitLead(e) {
     localStorage.setItem('hh_customers', JSON.stringify(customers));
     localStorage.setItem('hh_user_signed', 'true');
     
-    // Auto-fill checkout details if they buy later
+    // Auto-fill checkout details
     localStorage.setItem('hh_saved_name', data.name);
+    localStorage.setItem('hh_saved_email', data.email);
     localStorage.setItem('hh_saved_phone', data.phone);
     
     closeLeadModal();
@@ -642,7 +686,7 @@ function toggleCart() {
         drawer.classList.remove('active'); over.classList.remove('active');
     } else {
         drawer.classList.add('active'); over.classList.add('active');
-        document.getElementById('menuOverlay').classList.remove('active'); // ensure menu closes
+        document.getElementById('menuOverlay').classList.remove('active');
     }
 }
 
@@ -689,14 +733,15 @@ function renderReviews() {
 // --- CHECKOUT ---
 function openCheckout() {
     if(!cart.length) return showToast("Cart is empty");
-    toggleCart(); // Close cart
+    toggleCart(); 
     const modal = document.getElementById('checkoutModal');
     const over = document.querySelector('.overlay');
     modal.classList.add('active'); over.classList.add('active');
     
-    // Auto-fill if user previously signed in
+    // Auto-fill
     if(localStorage.getItem('hh_saved_name')) {
         document.getElementById('cName').value = localStorage.getItem('hh_saved_name');
+        document.getElementById('cEmail').value = localStorage.getItem('hh_saved_email');
         document.getElementById('cPhone').value = localStorage.getItem('hh_saved_phone');
     }
     
@@ -727,7 +772,6 @@ function goToPayment(e) {
 function pay(method) {
     payMethod = method;
     const total = cart.reduce((a,b) => a+(b.price*b.qty), 0);
-    // Deep links
     let link = "";
     if(method === 'Google Pay') link = `tez://upi/pay?pa=${UPI_ID}&pn=Herbal&am=${total}&cu=INR`;
     if(method === 'PhonePe') link = `phonepe://upi/pay?pa=${UPI_ID}&pn=Herbal&am=${total}&cu=INR`;
@@ -737,22 +781,51 @@ function pay(method) {
 }
 
 function confirmOrder() {
+    const custName = document.getElementById('cName').value;
+    const custEmail = document.getElementById('cEmail').value;
+    const custPhone = document.getElementById('cPhone').value;
+    const total = cart.reduce((a,b) => a+(b.price*b.qty), 0);
+    const itemList = cart.map(i=>`${i.name} (x${i.qty})`).join(', ');
+
+    // 1. Save Order locally
     const order = {
         id: 'ORD' + Math.floor(Math.random()*10000),
         date: new Date().toLocaleString(),
-        customer: document.getElementById('cName').value,
-        phone: document.getElementById('cPhone').value,
+        customer: custName,
+        phone: custPhone,
         address: document.getElementById('cAddr').value,
         items: cart,
-        total: cart.reduce((a,b) => a+(b.price*b.qty), 0),
+        total: total,
         method: payMethod || 'QR Scan'
     };
-    
     orders.push(order);
     localStorage.setItem('hh_orders', JSON.stringify(orders));
+
+    // 2. Send Email via EmailJS
+    showToast("Processing Order & Sending Email...");
     
+    const emailParams = {
+        to_email: custEmail,
+        to_name: custName,
+        order_id: order.id,
+        order_items: itemList,
+        order_total: total,
+        from_name: "Herbal&Heaven Support" // Sent on behalf of you
+    };
+
+    // NOTE: Replace 'YOUR_SERVICE_ID' & 'YOUR_TEMPLATE_ID' at top of script
+    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, emailParams)
+        .then(function() {
+            console.log('EMAIL SENT!');
+        }, function(error) {
+            console.log('EMAIL FAILED...', error);
+        });
+
+    // 3. Update UI
+    document.getElementById('confEmailDisplay').innerText = custEmail;
     document.getElementById('step2').style.display = 'none';
     document.getElementById('step3').style.display = 'block';
+    
     cart = []; updateCart();
 }
 
@@ -765,7 +838,7 @@ function toggleMenu() {
 function showToast(msg) {
     const t = document.getElementById('toast');
     t.innerText = msg; t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2500);
+    setTimeout(() => t.classList.remove('show'), 3000);
 }
 
 function openAdminLogin() {

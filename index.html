@@ -12,15 +12,6 @@
 
 <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
 
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-<script type="text/javascript">
-   (function(){
-      // Initialize EmailJS
-      // REPLACE 'YOUR_PUBLIC_KEY' WITH YOUR ACTUAL KEY FROM EMAILJS DASHBOARD
-      emailjs.init("YOUR_PUBLIC_KEY");
-   })();
-</script>
-
 <style>
 /* ---------- 1. Variables & Reset ---------- */
 :root {
@@ -29,7 +20,6 @@
   --secondary: #f4e9d5;
   --accent: #c5a059;
   --text-dark: #2c2c2c;
-  --text-light: #666666;
   --white: #ffffff;
   --danger: #e74c3c;
   --success: #27ae60;
@@ -49,7 +39,7 @@ body {
   color: var(--text-dark);
   line-height: 1.6;
   overflow-x: hidden;
-  padding-bottom: 70px; /* Space for bottom bar */
+  padding-bottom: 70px;
 }
 
 h1, h2, h3, h4 { font-family: var(--font-heading); color: var(--primary); }
@@ -83,6 +73,11 @@ input, textarea { font-family: var(--font-body); }
 }
 .btn-secondary:hover { background: var(--primary); color: var(--white); }
 
+.btn-icon {
+    width: 35px; height: 35px; border-radius: 50%; display: inline-flex; 
+    align-items: center; justify-content: center; color: white; margin-left: 5px;
+}
+
 .badge {
   position: absolute; top: 15px; left: 15px;
   background: var(--accent); color: white;
@@ -108,7 +103,6 @@ header {
 }
 .logo img { 
     height: 50px; width: 50px; border-radius: 50%; object-fit: cover;
-    /* LOGO ROTATION ANIMATION RESTORED */
     animation: rotateLogo 20s linear infinite;
 }
 
@@ -217,7 +211,7 @@ header {
 
 .modal {
   position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.95);
-  width: 90%; max-width: 450px; background: white;
+  width: 90%; max-width: 500px; background: white;
   z-index: 1000; border-radius: 12px; padding: 25px;
   opacity: 0; visibility: hidden; transition: var(--transition);
   box-shadow: 0 25px 50px rgba(0,0,0,0.25);
@@ -250,7 +244,7 @@ header {
 .cart-controls { display: flex; align-items: center; gap: 10px; margin-top: 5px; }
 .qty-btn { width: 25px; height: 25px; border-radius: 50%; background: #f0f0f0; display: flex; align-items: center; justify-content: center; }
 
-/* ---------- 9. Social Media & Contact Bar ---------- */
+/* ---------- 9. Social Media Bar ---------- */
 .social-bar {
   position: fixed; bottom: 0; left: 0; width: 100%;
   background: white; border-top: 1px solid #eee;
@@ -265,7 +259,6 @@ header {
 .social-link i { font-size: 20px; transition: transform 0.2s; }
 .social-link:hover i { transform: translateY(-3px); }
 
-/* Brand Colors for Social Icons */
 .fa-whatsapp { color: #25d366; }
 .fa-instagram { color: #C13584; }
 .fa-facebook { color: #1877F2; }
@@ -290,16 +283,12 @@ header {
   }
   .nav-menu.active { left: 0; }
   .nav-menu a { font-size: 16px; padding: 15px 0; border-bottom: 1px solid #f5f5f5; }
-  
   .hero { height: 60vh; }
   .hero h1 { font-size: 32px; }
   .cart-drawer { width: 85%; }
-  
   .filter-container { flex-direction: column; align-items: stretch; }
   .search-box { width: 100%; max-width: none; }
-  
   .modal { width: 95%; padding: 20px; }
-  
   .payment-buttons { flex-direction: column; }
 }
 </style>
@@ -503,7 +492,7 @@ header {
   <div id="step3" style="display:none; text-align:center;">
     <i class="fa-solid fa-circle-check" style="color:var(--success); font-size:50px; margin-bottom:15px;"></i>
     <h3>Order Placed!</h3>
-    <p>We have sent a confirmation email to <span id="confEmailDisplay" style="font-weight:bold;"></span>.</p>
+    <p style="margin-bottom:20px;">We have sent your order details to Herbal&Heaven via WhatsApp.</p>
     <button class="btn btn-secondary" onclick="closeCheckout(); location.reload();" style="margin-top:20px;">Close</button>
   </div>
 </div>
@@ -521,14 +510,20 @@ header {
       <button class="btn btn-primary" onclick="refreshData()"><i class="fa-solid fa-rotate-right"></i></button>
     </div>
     <div style="display:flex; gap:10px; margin-bottom:15px;">
-        <button class="btn btn-secondary" onclick="exportOrders()">Export Orders</button>
-        <button class="btn btn-secondary" onclick="exportCustomers()">Export Customers</button>
+        <button class="btn btn-secondary" onclick="exportOrders()">Orders .xlsx</button>
+        <button class="btn btn-secondary" onclick="exportCustomers()">Customers .xlsx</button>
     </div>
-    <div style="overflow-x:auto;">
+    <div style="overflow-x:auto; max-height: 400px;">
         <table style="width:100%; font-size:12px; text-align:left; border-collapse:collapse;" id="orderTable">
-            <thead><tr style="background:#f5f5f5;"><th>ID</th><th>Name</th><th>Amt</th><th>Items</th></tr></thead>
+            <thead><tr style="background:#f5f5f5;"><th>ID/Name</th><th>Items</th><th>Notify</th></tr></thead>
             <tbody id="orderBody"></tbody>
         </table>
+    </div>
+    
+    <div style="margin-top: 30px; padding-top: 20px; border-top: 2px dashed #eee; text-align: center;">
+        <button class="btn" style="background: var(--danger); color: white;" onclick="resetDatabase()">
+            <i class="fa-solid fa-trash"></i> Reset Database
+        </button>
     </div>
   </div>
 </div>
@@ -537,9 +532,9 @@ header {
 // --- CONFIG ---
 const UPI_ID = "damareomkar96@oksbi";
 const ADMIN_PASS = "omti96";
-// IMPORTANT: Setup EmailJS account to get these keys
-const EMAILJS_SERVICE_ID = "YOUR_SERVICE_ID"; 
-const EMAILJS_TEMPLATE_ID = "YOUR_TEMPLATE_ID";
+const OWNER_PHONE = "919595641664"; // Your Phone
+const OWNER_EMAIL = "damareomkar96@gmail.com"; // Your Email
+const SECRET_CODE = "DELETE99"; // Code to delete database
 
 // --- DATA ---
 const products = [
@@ -784,6 +779,7 @@ function confirmOrder() {
     const custName = document.getElementById('cName').value;
     const custEmail = document.getElementById('cEmail').value;
     const custPhone = document.getElementById('cPhone').value;
+    const custAddr = document.getElementById('cAddr').value;
     const total = cart.reduce((a,b) => a+(b.price*b.qty), 0);
     const itemList = cart.map(i=>`${i.name} (x${i.qty})`).join(', ');
 
@@ -792,8 +788,9 @@ function confirmOrder() {
         id: 'ORD' + Math.floor(Math.random()*10000),
         date: new Date().toLocaleString(),
         customer: custName,
+        email: custEmail,
         phone: custPhone,
-        address: document.getElementById('cAddr').value,
+        address: custAddr,
         items: cart,
         total: total,
         method: payMethod || 'QR Scan'
@@ -801,35 +798,19 @@ function confirmOrder() {
     orders.push(order);
     localStorage.setItem('hh_orders', JSON.stringify(orders));
 
-    // 2. Send Email via EmailJS
-    showToast("Processing Order & Sending Email...");
-    
-    const emailParams = {
-        to_email: custEmail,
-        to_name: custName,
-        order_id: order.id,
-        order_items: itemList,
-        order_total: total,
-        from_name: "Herbal&Heaven Support" // Sent on behalf of you
-    };
-
-    // NOTE: Replace 'YOUR_SERVICE_ID' & 'YOUR_TEMPLATE_ID' at top of script
-    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, emailParams)
-        .then(function() {
-            console.log('EMAIL SENT!');
-        }, function(error) {
-            console.log('EMAIL FAILED...', error);
-        });
+    // 2. Alert Owner via WhatsApp (Simulates the Customer sending the order)
+    const msg = `New Order!%0AID: ${order.id}%0AName: ${custName}%0AItems: ${itemList}%0ATotal: ₹${total}%0AAddress: ${custAddr}`;
+    const waUrl = `https://wa.me/${OWNER_PHONE}?text=${msg}`;
+    window.open(waUrl, '_blank');
 
     // 3. Update UI
-    document.getElementById('confEmailDisplay').innerText = custEmail;
     document.getElementById('step2').style.display = 'none';
     document.getElementById('step3').style.display = 'block';
     
     cart = []; updateCart();
 }
 
-// --- ADMIN & UTILS ---
+// --- ADMIN & NOTIFICATIONS ---
 function toggleMenu() {
     document.getElementById('mainMenu').classList.toggle('active');
     document.getElementById('menuOverlay').classList.toggle('active');
@@ -860,13 +841,50 @@ function checkAdmin() {
 function refreshData() {
     const tbody = document.getElementById('orderBody');
     tbody.innerHTML = orders.map(o => `
-        <tr>
-            <td style="padding:8px; border-bottom:1px solid #eee;">${o.id}</td>
-            <td style="padding:8px; border-bottom:1px solid #eee;">${o.customer}<br><small>${o.phone}</small></td>
-            <td style="padding:8px; border-bottom:1px solid #eee;">₹${o.total}</td>
-            <td style="padding:8px; border-bottom:1px solid #eee;">${o.items.map(i=>i.name).join(', ')}</td>
+        <tr style="border-bottom:1px solid #eee;">
+            <td style="padding:8px;">
+                <strong>${o.id}</strong><br>${o.customer}<br>
+                <small>${o.phone}</small>
+            </td>
+            <td style="padding:8px;">
+                ${o.items.map(i=>`${i.name} (${i.qty})`).join('<br>')}
+                <br><strong>₹${o.total}</strong>
+            </td>
+            <td style="padding:8px; white-space:nowrap;">
+                <button class="btn-icon" style="background:#25d366" onclick="notifyWA('${o.phone}', '${o.customer}', '${o.id}', '${o.total}')"><i class="fa-brands fa-whatsapp"></i></button>
+                <button class="btn-icon" style="background:#DB4437" onclick="notifyEmail('${o.email}', '${o.customer}', '${o.id}', '${o.total}')"><i class="fa-solid fa-envelope"></i></button>
+            </td>
         </tr>
     `).join('');
+}
+
+// "Manual Automation" - One click triggers
+function notifyWA(phone, name, id, total) {
+    const msg = `Hi ${name}, Your order ${id} of ₹${total} is successfully confirmed! We will ship it shortly. - Herbal&Heaven`;
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+function notifyEmail(email, name, id, total) {
+    const subject = `Order Confirmed: ${id}`;
+    const body = `Hi ${name},\n\nThank you for ordering from Herbal&Heaven!\nYour order ${id} amounting to ₹${total} is confirmed.\n\nWe will ship your items soon.\n\nRegards,\nOmkar`;
+    window.open(`mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
+}
+
+// Data Management
+function resetDatabase() {
+    const code = prompt("Enter Secret Code to DELETE ALL DATA:");
+    if(code === SECRET_CODE) {
+        if(confirm("Are you sure? This cannot be undone.")) {
+            localStorage.removeItem('hh_orders');
+            localStorage.removeItem('hh_customers');
+            orders = [];
+            customers = [];
+            refreshData();
+            alert("Database Wiped.");
+        }
+    } else {
+        alert("Incorrect Code.");
+    }
 }
 
 function exportOrders() {
